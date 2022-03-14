@@ -1,0 +1,35 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ComfyLearn.Models.ClanakKomentari
+
+<div class="">
+    @{
+        var usr = Model.korisnik;
+        var slika = usr.Slika;
+    }
+    <span><img src="@slika" alt="" class="rounded-circle col-2 float-left mt-4" width="40" height="40"></span>
+    <label class="col-3 float-left" asp-for="@usr.UserName" style="color:black; font-weight:300;">@usr.UserName</label><br />
+    <div class="form-group"> <input id="txt" style="width:300px;" asp-for="Komentar" class="form-control" readonly /> </div>
+</div>
+<button class="btn btn-danger" type="button" id="ukloniKomentar">Obriši</button>
+
+<script>
+
+    $("#ukloniKomentar").click(function () {
+        event.preventDefault();
+        var formData = $(this);
+
+        $.ajax({
+            type: "post",
+            url: "/Blog/GetCommentPost/" + @Model.Id,
+            data: formData.serialize(),
+            success: function (response) {
+                $('.modal').remove();
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+                document.getElementById("Komentari").innerHTML = response;
+            }
+        })
+    });
+</script>

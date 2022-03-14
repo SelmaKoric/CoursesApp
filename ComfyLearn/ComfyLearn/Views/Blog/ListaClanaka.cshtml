@@ -1,0 +1,56 @@
+﻿@model List<Clanak>
+
+
+
+@if (Model.Count() > 0)
+{
+<h4 class="mb-5"><strong>@Model[0].Kategorija.Naziv</strong></h4>
+<div class="row">
+
+    @foreach (var item in Model)
+        {
+    <input hidden asp-for="@item.Id" />
+
+    <div class="col-lg-4 col-md-12 mb-4">
+        <div class="card">
+            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                @{ var base64 = Convert.ToBase64String(item.Slika);
+                           var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                }
+                <img src="@imgsrc" height="100" />
+                <h6 class="card-title">@item.DatumKreiranja.ToShortDateString()</h6>
+                <a href="#" read="da" ajax-url="/Blog/ReadMore/@item.Id">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                </a>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@item.Naslov</h5>
+                <p class="card-text">
+                    @item.Sadrzaj
+
+                </p>
+                <a href="#" class="btn btn" style="background-color:rebeccapurple; color:white;" read="da" ajax-url="/Blog/ReadMore/@item.Id">Read</a>
+            </div>
+        </div>
+    </div>
+        }
+
+</div>
+}
+else {
+<h1>Nema dostupnih članaka!</h1>
+}
+
+<script>
+    $("[read='da']").click(function (e) {
+        e.preventDefault();
+        var url = $(this).attr("ajax-url");
+        $.get(url, function (result) {
+            $("#AjaxDiv").html(result);
+
+            ReadMore();
+            GetClanke();
+        });
+
+    });
+</script>

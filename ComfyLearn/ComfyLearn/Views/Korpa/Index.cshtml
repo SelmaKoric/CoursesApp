@@ -1,0 +1,113 @@
+﻿@model ComfyLearn.ViewModel.KorpaVM
+@using Microsoft.Extensions.Options
+
+@inject IOptions<ComfyLearn.Utility.StripeSettings> Stripe
+
+<br />
+<br />
+<br />
+<br />
+@if (Model.KorpaStavke.Count > 0)
+{
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-dark text-light ml-0 row container">
+                <div class="col-6">
+                    <i class="fa fa-shopping-cart"></i>&nbsp;
+                    Shopping Cart
+                </div>
+                <div class="col-6 text-right">
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-info btn-sm">Continue learning</a>
+                </div>
+            </div>
+            <div class="card-body">
+                @foreach (var item in Model.KorpaStavke)
+                {
+                    <div class="row">
+                        <div class="d-none d-lg-block text-center">
+                            <img src="@item.course.SlikaKursa" class="rounded py-2" />
+                        </div>
+                        <div class="col-12 text-sm-center col-lg-4 text-lg-left">
+                            <h4><strong>@item.course.Naziv</strong></h4>
+                            <h4><small>@item.course.Opis</small></h4>
+                        </div>
+                        <div class="col-12 text-sm-center col-lg-3 text-lg-right">
+                            <div class="col-4 text-md-right" style="padding-top:5px;">
+                                <h6><strong>$@item.course.Cijena</strong></h6>
+                            </div>
+                        </div>
+                        <div class="col-2 col-sm-4 col-lg-2">
+                            <div class="float-right mx-1">
+                                <a class="btn btn-outline-danger ukloni-kurs" asp-action="UkloniKurs" asp-route-Id="@item.Id">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                }
+                <div class="row">
+                    <div class="col-12 col-md-6 offset-md-5 col-lg-4 offset-lg-8 pr-4">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between bg-light">
+                                <span class="text-info">Total (USD)</span>
+                                <strong class="text-info">
+                                    $
+                                    <span id="txtTotal">@Model.KupljenaKorpa.UkupanIznos</span>
+                                </strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+
+                <form method="post" asp-action="PayNow">
+                    <input id="userId" asp-for="@Model.KorpaStavke[0].userId" hidden />
+                    <input asp-for="@Model.KupljenaKorpa.KorisnikId" hidden />
+
+                    <div class="col-12 col-lg-4 offset-lg-8 col-md-6 offset-md-6">
+                        @{
+                            var totalForStripe = Model.KupljenaKorpa.UkupanIznos * 100;
+                        }
+                        <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                data-key="@Stripe.Value.PublishableKey"
+                                data-amount="@totalForStripe"
+                                data-name="Comfy Learn"
+                                data-label="Buy course"
+                                data-description="New course for you!"
+                                data-locale="auto"
+                                data-allow-remember-me="false"
+                                data-image="https://stripe.com/img/documentation/checkout/marketplace.png">
+                        </script>
+                        <script>
+                            document.getElementsByClassName("stripe-button-el")[0].style.display = "none";
+                        </script>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".ukloni-kurs").click(function () {
+            event.preventDefault();
+            var href = $(this).attr('href');
+
+            $.ajax({
+                type: "get",
+                url: href,
+                success: function (data) {
+                    $("#korpa").html(data);
+                }
+            })
+        });
+    </script>
+}
+else
+{
+    <br />
+    <div>
+        <h3>No items added to the shopping cart...</h3>
+    </div>
+}

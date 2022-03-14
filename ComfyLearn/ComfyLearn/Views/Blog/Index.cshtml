@@ -1,0 +1,211 @@
+﻿@model ComfyLearn.ViewModel.BlogVM
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title></title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+    <!-- Google Fonts Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+    <!-- MDB -->
+    <link rel="stylesheet" href="~/ContentBlog/css/mdb.min.css" />
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+    <header>
+        <!-- Intro settings -->
+        <style>
+      #intro {
+        /* Margin to fix overlapping fixed navbar */
+        margin-top: 58px;
+      }
+      @*@media (max-width: 991px) {
+        #intro {
+          /* Margin to fix overlapping fixed navbar */
+          margin-top: 45px;
+        }
+      }*@
+        </style>
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg fixed-top" style="background-color:rebeccapurple; color:white;">
+            <div class="container-fluid" style="color:white;">
+                <!-- Navbar brand -->
+                <a class="navbar-brand" target="_blank" asp-action="Index">
+                    <img src="~/img/logo.png" height="16" alt="" loading="lazy"
+                         style="margin-top: -3px;" />
+                </a>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarExample01"
+                        aria-controls="navbarExample01" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                @if (User.IsInRole("User"))
+                {
+                    <li class="nav-item my-1">
+                        <a style="background-color:white; border-radius:5px;" class="btn" asp-action="Create">Dodaj novi članak</a>
+                    </li>
+                }
+                <div class="collapse navbar-collapse" id="navbarExample01">
+                    <ul class="nav navbar-nav navbar-right custom-menu">
+
+                        <li class="nav-item">
+                            <a style="color:white;" class="nav-link" aria-current="page" asp-action="Index">Home</a>
+                        </li>
+
+                        @foreach (var item in Model.Kategorije)
+                        {
+                            <li class="nav-item">
+                                <a style="color:white;" kategorije="da" class="nav-link" aria-current="page" asp-action="" ajax-url="/Blog/GetClanak?kategorijaId=@item.Id">@item.Naziv</a>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Navbar -->
+        <!-- Jumbotron -->
+        <!-- Jumbotron -->
+    </header>
+    <!--Main Navigation-->
+    <!--Main layout-->
+
+    <main class="my-5">
+        <div class="ml-2 mr-2">
+            <!--Section: Content-->
+            <div id="intro" class="p-5 text-center bg-light">
+                <h1 class="mb-3 h2">ComfyLearn Blog</h1>
+
+            </div>
+            <section class="text-center" id="AjaxDiv">
+
+                <h4 class="mb-5"><strong>Latest posts</strong></h4>
+
+                <div class="row">
+
+                    @foreach (var item in Model.Clanci)
+                    {
+
+
+                        <div class="col-lg-4 col-md-12 mb-4">
+                            <div class="card">
+                                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                    @{ var base64 = Convert.ToBase64String(item.Slika);
+                                        var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                    }
+
+                                    <img src="@imgsrc" height="100" />
+                                    <a href="#" read="da" ajax-url="/Blog/ReadMore/@item.Id">
+                                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">@item.Naslov</h5>
+                                    <h6 class="card-title">@item.DatumKreiranja.ToShortDateString()</h6>
+                                    <p class="card-text">
+                                        @item.Sadrzaj
+                                    </p>
+                                    <a asp-action="" read="da" ajax-url="/Blog/ReadMore/@item.Id" class="btn" style="background-color:rebeccapurple; color:white;">Read</a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    }
+
+
+
+
+                </div>
+
+                <nav class="" aria-label="...">
+                    <div class="" style="background-color:rebeccapurple;">
+                        <div page-model="@Model.pagingInfo" page-class-enabled="true"
+                             page-class="btn btn-border" page-class-normal="btn btn-light"
+                             page-class-selected="btn btn-info active" class="btn-group ">
+                        </div>
+                    </div>
+                </nav>
+            </section>
+
+            <!--Section: Content-->
+            <!-- Pagination -->
+
+        </div>
+    </main>
+
+
+
+    <!--Main layout-->
+    <!--Footer-->
+    <footer class="bg-light text-lg-start mt-2">
+        <div class="py-4 text-center">
+            <a role="button" class="btn btn-lg m-2"
+               asp-controller="Home" asp-action="Index" rel="nofollow" style="background-color:rebeccapurple;color:white;">
+                Nazad na ComfyLearn
+            </a>
+
+        </div>
+
+        <hr class="m-0" />
+
+
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © @DateTime.Today.Year Copyright:
+            <a class="text-dark" href="#">ComfyLearn</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--Footer-->
+    @section Scripts {
+        <!-- MDB -->
+        <script type="text/javascript" src="~/ContentBlog/js/mdb.min.js"></script>
+
+        <script>
+            tinyMCE.remove('textarea');
+            $(document).ready(function () {
+                ReadMore();
+                GetClanke();
+            });
+
+            function GetClanke() {
+
+                $("a[kategorije='da']").click(function (e) {
+                    e.preventDefault();
+                    var url = $(this).attr("ajax-url");
+                    $.get(url, function (result) {
+                        $("#AjaxDiv").html(result);
+                    });
+
+                });
+            }
+            function ReadMore() {
+
+                $("[read='da']").click(function (e) {
+                    e.preventDefault();
+                    var url = $(this).attr("ajax-url");
+                    $.get(url, function (result) {
+                        $("#AjaxDiv").html(result);
+
+                        ReadMore();
+                        GetClanke();
+                    });
+
+                });
+            }
+
+
+
+        </script>
+       }
+
+    </body>
+</html>
+

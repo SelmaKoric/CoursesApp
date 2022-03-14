@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewData["Title"] = "CourseList";
+}
+@model List<ComfyLearn.Models.Course>
+
+@foreach (var kurs in Model)
+{
+    <div class="col-xl-4 col-lg-4 col-md-6" style="float:left">
+        <input asp-for="@kurs.Id" hidden/>
+        <div class="single_courses">
+            <div class="thumb">
+                <a href="#">
+                    <img src="@kurs.SlikaKursa" class="anchorDetails" data-id="@kurs.Id" alt="">
+                </a>
+            </div>
+            <div class="courses_info">
+                <span>@kurs.Naziv</span>
+                <h3>
+                    <a class="anchorDetails" href="#" data-id="@kurs.Id">
+                        @kurs.Opis
+                    </a>
+                </h3>
+                <div class="star_prise d-flex justify-content-between">
+                    <div class="star">
+                        <i class="flaticon-mark-as-favorite-star"></i>
+                        <span>(4.5)</span>
+                    </div>
+                    <div class="prise">
+                        <span class="offer">@kurs.Cijena</span>
+                        <span class="active_prise">
+                            @kurs.Cijena
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<div class="modal fade" id="modalVM" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <!--Content-->
+        <div class="modal-content">
+
+            <!--Body-->
+            <div class="modal-body mb-0 p-0" id="modalBody">
+
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer justify-content-center flex-column flex-md-row">
+                <button type="button" class="btn btn-outline-primary btn-rounded btn-md ml-4"
+                        data-dismiss="modal">
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+        <!--/.Content-->
+
+    </div>
+</div>
+
+<script>
+    var PostBackUrl = '/Home/GetCourse';
+
+    $(".anchorDetails").click(function (event) {
+        event.preventDefault();
+
+        var $buttonClicked = $(this);
+        var id = $buttonClicked.data("id");
+
+        $.ajax({
+            type: "GET",
+            url: PostBackUrl,
+            contentType: "application/json; charset=utf-8",
+            data: { "Id": id },
+            cache: false,
+            dataType: 'html',
+            success: function (data) {
+                $("#modalBody").html(data);
+                $("#modalVM").modal('show');
+            },
+            error: function () {
+                alert("Dynamic content load failed!");
+            }
+        });
+
+    });
+
+    var modal = document.getElementById('modalVM');
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+</script>

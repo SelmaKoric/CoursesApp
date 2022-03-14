@@ -1,0 +1,80 @@
+﻿@page
+@model ComfyLearn.Views.Admin.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Course</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Course.Id" />
+            <div class="form-group">
+                <label asp-for="Course.Naziv" class="control-label"></label>
+                <input asp-for="Course.Naziv" class="form-control" />
+                <span asp-validation-for="Course.Naziv" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.Opis" class="control-label"></label>
+                <input asp-for="Course.Opis" class="form-control" />
+                <span asp-validation-for="Course.Opis" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.Trajanje" class="control-label"></label>
+                <input asp-for="Course.Trajanje" class="form-control" />
+                <span asp-validation-for="Course.Trajanje" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.BrojLekcija" class="control-label"></label>
+                <input asp-for="Course.BrojLekcija" class="form-control" />
+                <span asp-validation-for="Course.BrojLekcija" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Course.Certifikat" /> @Html.DisplayNameFor(model => model.Course.Certifikat)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.korisnikId" class="control-label"></label>
+                <select asp-for="Course.korisnikId" class="form-control" asp-items="ViewBag.korisnikId"></select>
+                <span asp-validation-for="Course.korisnikId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.kategorijaId" class="control-label"></label>
+                <select asp-for="Course.kategorijaId" class="form-control" asp-items="ViewBag.kategorijaId"></select>
+                <span asp-validation-for="Course.kategorijaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.DatumKreiranja" class="control-label"></label>
+                <input asp-for="Course.DatumKreiranja" class="form-control" />
+                <span asp-validation-for="Course.DatumKreiranja" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.jezikId" class="control-label"></label>
+                <select asp-for="Course.jezikId" class="form-control" asp-items="ViewBag.jezikId"></select>
+                <span asp-validation-for="Course.jezikId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course.Cijena" class="control-label"></label>
+                <input asp-for="Course.Cijena" class="form-control" />
+                <span asp-validation-for="Course.Cijena" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

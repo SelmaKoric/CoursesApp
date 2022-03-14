@@ -1,0 +1,117 @@
+﻿@{ ViewData["Title"] = "Add new course";
+}
+@model ComfyLearn.ViewModel.AddCourseVM
+
+    
+
+    
+    <div class="container" style="margin:auto !important; width: 100%; display: flex;">
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit material</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-action="AddMaterial" asp-controller="Course" class="align-content-center" >
+                            <div class="form-group col-lg-12 ">
+                                <input class="form-control" asp-for="materijal.Id" type="hidden" />
+                                <input class="form-control" asp-for="Id" type="hidden" />
+                                <label asp-for="materijal.Naslov">Naslov</label>
+                                <input asp-for="materijal.Naslov" class="form-control" placeholder="Enter course name..." />
+                                <label asp-for="materijal.Opis">Opis</label>
+                                <input asp-for="materijal.Opis" class="form-control" placeholder="Enter description ..." />
+                                <label asp-for="materijal.VideoPath">URL</label>
+                                <input asp-for="materijal.VideoPath" class="form-control" placeholder="Enter description ..." />
+                                
+                                
+                            </div>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        
+                            <button type="submit" class="btn btn-primary">Create Material</button>
+                        
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (TempData["succMsg"] != null)
+        {
+            <div class="alert alert-success" style="position:fixed;margin:20px 20px 0px 0px;right:0;">
+                @TempData["succMsg"]
+            </div>
+        }
+        else if (TempData["errorMsg"] != null)
+        {
+            <div class="alert alert-danger" style="position:fixed;margin:20px 20px 0px 0px;right:0;">
+                @TempData["errorMsg"]
+            </div>
+        }
+        <div class="col-lg-6">
+
+            <form asp-action="Add" asp-controller="Course" class="align-content-center  mt-3 ml-5">
+                <div class="form-group col-lg-12 ">
+                    <input class="form-control" asp-for="Id" type="hidden" />
+                    <label asp-for="Naziv">Naziv</label>
+                    <input asp-for="Naziv" class="form-control" placeholder="Enter course name..." />
+                    <label asp-for="Opis">Opis</label>
+                    <input asp-for="Opis" class="form-control" placeholder="Enter description ..." />
+                    <label asp-for="kategorija">Kategorija</label>
+                    <select class="form-control" asp-for="kategorijaId" asp-items="@Model.kategorije">
+                    </select>
+                    <input asp-for="Opis" class="form-control" placeholder="Enter description ..." />
+                    <label asp-for="Trajanje">Trajanje</label>
+                    <input type="datetime" asp-for="Trajanje" class="form-control" placeholder="Enter duration..." />
+                    <label asp-for="BrojLekcija">BrojLekcija</label>
+                    <input type="number" asp-for="BrojLekcija" class="form-control" placeholder="Enter number of lecture..." />
+                    <label asp-for="Certifikat">Certifikat</label>
+                    <input type="checkbox" asp-for="Certifikat" class="form-control" placeholder="Enter new role..." />
+                    <label asp-for="Cijena">Cijena</label>
+                    <input type="number" asp-for="Cijena" class="form-control" placeholder="Enter new role..." />
+                    @if (Model?.Id != 0)
+                    {
+                        <button type="submit" class="btn btn-primary mt-3">Update Course</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary mt-3">Create Course</button>
+                    }
+                    <button type="button" class="btn btn-success mt-3" data-toggle="modal" data-target="#exampleModal">Add material</button>
+
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-6">
+            Materijali
+            <div style="display:flex; width: 100%; height:100vh;justify-content:center; flex-wrap:wrap; overflow-y:scroll;" class="overflow-auto">
+                @foreach (var item in Model.materijali)
+                {
+                    
+                        <div class="card m-2" style="width: 100%; display:flex;flex-direction:row;height:max-content;">
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Naslov</h5>
+                                <p class="card-text">@item.Opis</p>
+                            </div>
+                            <div class="buttons" style="display:flex;flex-direction:column;justify-content:space-evenly;height:100%;">
+                                <a href="@item.VideoPath" class="btn btn-primary mr-2">Watch</a>
+                                <a class="btn btn-secondary mr-2 mt-1 mb-1" asp-action="AddCourse" asp-controller="Admin" asp-route-materialid="@item.Id" asp-route-Id="@Model.Id">Edit</a>
+                                <a class="btn btn-danger mr-2" asp-action="DeleteMaterial" asp-controller="Course" asp-route-id="@item.Id">Delete</a>
+                            </div>
+                        </div>
+                    
+
+                }
+            </div>
+
+        </div>
+    </div>
+

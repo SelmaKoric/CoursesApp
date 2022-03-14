@@ -1,0 +1,56 @@
+﻿@model List<ComfyLearn.ViewModel.CourseListVM>
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_LayoutAdmin";
+}
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+
+    <h2>Lista kurseva</h2>
+
+    @if (ViewBag.Message != null)
+    {
+        <div>
+            @ViewBag.Message
+        </div>
+    }
+    <a asp-action="Create" class="btn btn-success mb-2">Novi kurs</a><br />
+
+    <table class="table table-bordered text-center table-responsive">
+        <tr>
+            <th>Rb</th>
+            <th>Naziv</th>
+            <th>Opis</th>
+            <th>Trajanje</th>
+            <th>Br. lekcija</th>
+            <th>Certifikat</th>
+            <th>Kategorija</th>
+            <th>Kreirano</th>
+            <th>Jezik</th>
+            <th>Cijena</th>
+            <th>Akcija</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Naziv</td>
+                <td>@item.Opis</td>
+                <td>@item.Trajanje</td>
+                <td>@item.BrojLekcija</td>
+                <td>@(item.Certifikat==true?"DA":"NE")</td>
+                <td>@item.kategorija</td>
+                <td>@item.DatumKreiranja</td>
+                <td>@item.jezik</td>
+                <td>@item.Cijena</td>
+                <td>
+                    <div class="d-flex">
+                        <a class="btn btn-primary mr-2" asp-action="AddCourse" asp-controller="Admin" asp-route-Id="@item.Id">Edit</a>
+                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>

@@ -1,0 +1,27 @@
+<form>
+  <div class="mb-3">
+    <label for="tipObavijestiId" class="form-label">Tip obavijesti</label>
+    <!---za edit--->
+    <input type="number" class="form-control" name="tipObavijestiId"
+           [(ngModel)]="tipObavijestiId" *ngIf="obavijest.id!=0" >
+    <!---za add--->
+    <select class="form-control" name="tipObavijestiId" id="tipObavijestiId"
+            [(ngModel)]="tipObavijestiId" *ngIf="obavijest.id==0">
+      <option *ngFor="let tip of listaTipoviObavijesti$|async" [ngValue]="tip.id">{{tip.naziv}}</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Naslov</label>
+    <input type="text" class="form-control" [(ngModel)]="naslov" name="naslov">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Datum obavijesti</label>
+    <input type="date" class="form-control" [(ngModel)]="datumObavijesti" name="datumObavijesti">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Sadržaj</label>
+    <textarea type="text" class="form-control" [(ngModel)]="sadrzaj" name="sadrzaj"></textarea>
+  </div>
+  <button (click)="DodajObavijest()" *ngIf="obavijest.id==0" class="btn btn-primary">Dodaj</button>
+  <button (click)="UrediObavijest()" *ngIf="obavijest.id!=0" class="btn btn-primary">Sačuvaj</button>
+</form>

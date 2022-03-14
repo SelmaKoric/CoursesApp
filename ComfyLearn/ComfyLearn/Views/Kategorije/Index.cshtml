@@ -1,0 +1,35 @@
+﻿@model IEnumerable<ComfyLearn.Models.Kategorija>
+
+@{
+    ViewData["Title"] = "Kategorije";
+    Layout = "_LayoutAdmin";
+}
+
+<h1>Kategorije kurseva</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Nova kategorija</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Naziv)
+            </th>
+            <th>Akcija</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Naziv)
+            </td>
+            <td>
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
+                <a class=" btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

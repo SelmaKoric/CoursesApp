@@ -1,0 +1,197 @@
+﻿@model ComfyLearn.ViewModel.ClanakVM
+
+<div>
+    <input hidden asp-for="@Model.Clanak.Id" />
+    <div id="intro" class="p-5 text-center">
+        <h1 class="mb-3 h2">@Model.Clanak.Kategorija.Naziv</h1>
+    </div>
+
+    @{ var base64 = Convert.ToBase64String(Model.Clanak.Slika);
+        var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+    }
+    <img src="@imgsrc" height="100" width="500" class="img-thumbnail" style="align-content:center; text-align:center;" />
+
+    <div class="p-5 text-center">
+        <h2 class="my-2 ml-6"><strong>@Model.Clanak.Naslov</strong></h2>&nbsp;
+        @if (User.IsInRole("Admin"))
+        {
+            @if (!Model.Clanak.Aktivan)
+            {
+                <span><a class="btn btn-danger mb-3 mt-3" asp-action="LockUnlock" asp-route-Id="@Model.Clanak.Id" read="da" ajax-url="/Blog/LockUnlock/@Model.Clanak.Id"><i class="fas fa-lock"></i></a></span>
+            }
+            else
+            {
+                <span><a class="btn btn-success mb-3 mt-3" asp-action="LockUnlock" asp-route-Id="@Model.Clanak.Id" read="da" ajax-url="/Blog/LockUnlock/@Model.Clanak.Id"><i class="fas fa-lock-open"></i></a></span>
+            }
+        }
+        else
+        {
+            <button data-id="@Model.Clanak.Id" type="button" class="btn btn-primary like-button"> <span class="like-count">@Model.Clanak.Likes</span>&nbsp;&nbsp;<i class="fas fa-thumbs-up"></i></button>
+            <button data-id="@Model.Clanak.Id" type="button" class="btn btn-danger dislike-button"> <span class="dislike-count">@Model.Clanak.Dislikes</span>&nbsp;&nbsp;<i class="fas fa-thumbs-down"></i></button>
+        }
+        <br />
+        <br />
+        <div class="row">
+            <h4 class="col-12 mb-3"><small>@Model.Clanak.DatumKreiranja.ToShortDateString()</small></h4>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="text-justify col-8 offset-2 font-weight-lighter">
+            @Html.Raw(Model.Clanak.Sadrzaj)
+        </div>
+
+    </div>
+
+    <br />
+
+    <section style="background-color:lightgray;">
+        <div class="container pt-3">
+            <h1>Komentari</h1>
+            <div id="Komentari">
+
+            </div>
+            <div class="col-6">
+                <form class="form-group" id="noviKomentar">
+                    <input asp-for="@Model.NoviKomentar.ClanakId" hidden />
+                    @{
+                        var usr = Model.NoviKomentar.korisnik;
+                        var slika = usr.Slika;
+                    }
+                    <span><img src="@slika" alt="" class="rounded-circle col-2 float-left mt-5" width="40" height="40"></span>
+                    <div class="form-group offset-2"> <label for="">Komentar:</label> <textarea id="txt" style="width:600px;" placeholder="Napišite svoj komentar..." asp-for="NoviKomentar.Komentar" class="form-control"></textarea> </div>
+                    <div class="form-group"> <button type="submit" id="postComment" class="btn" style="background-color:rebeccapurple;color:white;">Postavi komentar</button> </div>
+                </form>
+            </div><br />
+            <br /><br /><br />
+
+        </div>
+    </section>
+    <br />
+</div>
+
+
+
+
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+        $("#txt").focusin(function () {
+        tinymce.init({
+            selector: "textarea",
+            plugins: "lists",
+            menubar: "file edit format"
+        });
+    });
+
+    $.ajax({
+        url: "/Blog/GetComments?Id=@Model.Clanak.Id",
+        success: function (data) {
+            document.getElementById("Komentari").innerHTML = data;
+        },
+        error: function () {
+            alert("There was an error.");
+        }
+    });
+
+    $("form[id=noviKomentar]").submit(function () {
+        event.preventDefault();
+        var formData = $(this);
+
+        $.ajax({
+            type: "post",
+            url: "/Blog/PostComment",
+            data: {
+                NoviKomentar: {
+                    ClanakId: $('#NoviKomentar_ClanakId').val(),
+                    Komentar: tinymce.get("txt").getContent()
+                }
+            },
+            success: function (response) {
+                document.getElementById("Komentari").innerHTML = response;
+                tinymce.activeEditor.setContent('');
+            }
+        })
+    });
+
+
+    $(document).on('click', ".ukloniKomentarBtn", function (event) {
+        event.preventDefault();
+        var PostBackUrl = '/Blog/GetComment';
+
+        var $buttonClicked = $(this);
+        var id = $buttonClicked.attr("data-id");
+
+        $.ajax({
+            type: "GET",
+            url: PostBackUrl,
+            contentType: "application/json; charset=utf-8",
+            data: { "Id": id },
+            cache: false,
+            dataType: 'html',
+            success: function (data) {
+                $("#modalBody").html(data);
+                $("#myModal").modal('show');
+            },
+            error: function () {
+                alert("Dynamic content load failed!");
+            }
+        })
+
+        var modal = document.getElementById('myModal');
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    });
+
+</script>
+<script>
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/bloghub")
+            .configureLogging(signalR.LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
+
+        connection.onclose(async () => {
+                await start();
+        });
+
+        connection.on("updateLikeCount", (post) => {
+                $(".like-count").text(post.likes);
+            $(".dislike-count").text(post.dislikes);
+        });
+
+        // Start the connection.
+        start();
+
+        $(".like-button").on("click", function () {
+            var clanakId = $(this).attr("data-id");
+            connection.invoke("like", clanakId, "1");
+        });
+
+        $(".dislike-button").on("click", function () {
+            var clanakId = $(this).attr("data-id");
+            connection.invoke("like", clanakId, "0");
+        });
+
+
+
+
+
+</script>

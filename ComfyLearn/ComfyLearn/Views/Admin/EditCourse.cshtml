@@ -1,0 +1,23 @@
+﻿@model ComfyLearn.ViewModel.AddCourseVM
+<div class="container" style="margin:auto !important; width: 100%; display: flex;">
+    <form asp-action="AddMaterial" asp-controller="Course" class="align-content-center">
+        <div class="form-group col-lg-12 ">
+            <input class="form-control" asp-for="materijal.Id" type="hidden" />
+            <input class="form-control" asp-for="Id" type="hidden" />
+            <label asp-for="materijal.Naslov">Naslov</label>
+            <input asp-for="materijal.Naslov" class="form-control" placeholder="Enter course name..." />
+            <label asp-for="materijal.Opis">Opis</label>
+            <input asp-for="materijal.Opis" class="form-control" placeholder="Enter description ..." />
+            <label asp-for="materijal.VideoPath">URL</label>
+            <input asp-for="materijal.VideoPath" class="form-control" placeholder="Enter description ..." />
+
+
+        </div>
+        <a type="button" class="btn btn-danger ml-3" asp-action="AddCourse" asp-controller="Admin" asp-route-Id="@Model.materijal.courseId">Cancel</a>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+
+    </form>
+
+    <iframe width="560" height="315" src="@Model.materijalEmbed" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
